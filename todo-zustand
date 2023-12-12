@@ -1,0 +1,125 @@
+C:\Users\nhari\OneDrive\Documents\iitr gl apcifsd\React JS 3\zustand-yarn\todo-zustand>
+
+npm install -g yarn
+or npm install
+
+yarn add @chakra-ui/react
+
+docker build -t todo-zustand .
+docker run -p 3000:3000 -d todo-zustand
+docker stop 6736df20759ba63f15a25114f1ccece1059ec77563b0358936faf71b0c3ace1c
+
+https://github.com/jherr/todos-many-ways/tree/master
+
+Choosing between Redux Toolkit and Zustand depends on the complexity of your project and your personal preference.
+
+1. **Redux Toolkit**: It's a great choice for larger applications where you might need middleware support, devtools extension, and more complex state management. Redux Toolkit simplifies a lot of Redux's boilerplate and provides a set of tools that make it easier to write good Redux code. However, it can be overkill for simple state management needs.
+
+2. **Zustand**: It's a smaller, simpler alternative to Redux. Zustand provides a minimal API but still allows you to manage global state. It's easier to set up and use, especially for smaller applications or for specific parts of your application where Redux might be too heavy.
+
+In your case, since you're already using Zustand and your state management needs seem to be quite straightforward (based on the code you've shared), Zustand should be sufficient. However, if your application grows in complexity, you might want to consider switching to Redux Toolkit.
+
+const updateTodo = (todos: Todo[], id: number, text: string): Todo[] =>
+todos.map((todo) => ({
+...todo,
+text: todo.id === id ? text : todo.text,
+}));
+
+This is a function signature in TypeScript. It describes a function that takes three parameters and returns an array of Todo objects.
+
+Here's a breakdown:
+
+todos: Todo[]: The first parameter is todos, which is an array of Todo objects.
+id: number: The second parameter is id, which is a number. This is typically a unique identifier for a todo item.
+text: string: The third parameter is text, which is a string. This is typically the new text that you want to set for a todo item.
+: Todo[]: This after the parameter list indicates the return type of the function. In this case, the function returns an array of Todo objects.
+However, this is just the signature. The actual implementation of the function would depend on what you want to do with these parameters. For example, if this is an updateTodo function, you might want to return a new array where the todo item with the given id has its text updated.
+
+In this function, the map method is used to create a new array. For each todo item in the todos array, it checks if the id of the todo item matches the id parameter. If it does, it returns a new object with the same properties as the original todo item, but with the text property updated to the new text. If the id doesn't match, it returns the original todo item. This way, the function updates the specific todo item with the given id, and leaves all other todo items unchanged.
+
+Chakra UI error -> solution -> npm install --save-dev typescript@latest
+
+removeTodo
+@ App.tsx:
+const removeTodo = (id: number) => {
+setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+};
+
+passing it to TodoList component -
+<TodoList todos={todos} removeTodo={removeTodo} />
+
+@ TodoList.tsx -
+interface TodoListItemsProps {
+todos: Todo[];
+removeTodo: (id: number) => void;
+}
+
+It is TodoListItems component @ TodoList.tsx that is rendering each todo item so need to pass the removeTodo function to this component as well then use it in the onClick of the Delete button to remove the particular item -
+function TodoListItems({ todos, removeTodo }: TodoListItemsProps) {
+const theme = useTheme();
+
+return (
+<>
+{todos.map((todo) => (
+<Grid
+container
+spacing={3}
+style={{
+            paddingTop: '16px',
+            backgroundColor: theme.palette.background.default,
+          }}
+key={todo.id} >
+<Grid item xs={1}>
+<Checkbox />
+</Grid>
+<Grid item xs={8}>
+<TextField fullWidth value={todo.text} />
+</Grid>
+<Grid item xs={3}>
+<Button variant="contained" fullWidth onClick={() => removeTodo(todo.id)}>
+Delete
+</Button>
+</Grid>
+</Grid>
+))}
+</>
+);
+}
+
+function TodoList({ todos, removeTodo }: TodoListItemsProps) {
+return (
+<>
+<Typography variant="h4" className="listcss">
+Todo List
+</Typography>
+<TodoListItems todos={todos} removeTodo={removeTodo} />
+</>
+);
+}
+
+export default TodoList;
+
+const removeTodo = (id: number) => { setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id)); }; - seeking explanation wrt zustand store.ts as earlier you explained in terms of useState
+
+Sure, let's break down the `removeTodo` function in the context of Zustand:
+
+```typescript
+const removeTodo = (todos: Todo[], id: number): Todo[] =>
+  todos.filter((todo) => todo.id !== id);
+```
+
+1. `const removeTodo = (todos: Todo[], id: number): Todo[] => {...}`: This is the declaration of the `removeTodo` function. It takes two parameters, `todos` which is an array of `Todo` objects, and `id`, which is a number. This `id` is the identifier of the todo item that you want to remove. The function returns an array of `Todo` objects.
+
+2. `todos.filter((todo) => todo.id !== id)`: This is the body of the `removeTodo` function. It calls the `filter` function on the `todos` array.
+
+3. `(todo) => todo.id !== id`: This is the function provided to the `filter` method. It takes a todo item and returns `true` if the todo's `id` is not equal to the `id` passed to `removeTodo`, and `false` otherwise. This means that the `filter` method will create a new array that doesn't include the todo with the `id` passed to `removeTodo`.
+
+In the Zustand store, the `removeTodo` function is used like this:
+
+```typescript
+removeTodo: (id: number) => set((state) => ({ todos: removeTodo(state.todos, id) })),
+```
+
+Here, `set` is a function provided by Zustand that allows you to update the state. It's called with a function that takes the current state and returns the new state. The new state is an object that includes the updated `todos` array, which is obtained by calling the `removeTodo` function with the current `todos` array and the `id` of the todo to remove.
+
+In summary, the `removeTodo` function removes the todo with the specified `id` from the `todos` array, and the `removeTodo` method in the Zustand store updates the `todos` state with the new array.
