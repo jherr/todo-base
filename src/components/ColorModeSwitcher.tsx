@@ -1,30 +1,23 @@
-import * as React from "react"
-import {
-  useColorMode,
-  useColorModeValue,
-  IconButton,
-  IconButtonProps,
-} from "@chakra-ui/react"
-import { FaMoon, FaSun } from "react-icons/fa"
+import * as React from 'react';
+import { IconButton, useTheme } from '@material-ui/core';
+import Brightness4Icon from '@material-ui/icons/Brightness4';
+import Brightness7Icon from '@material-ui/icons/Brightness7';
 
-type ColorModeSwitcherProps = Omit<IconButtonProps, "aria-label">
+type ColorModeSwitcherProps = {
+  toggleTheme: () => void;
+} & React.ComponentProps<typeof IconButton>;
 
-export const ColorModeSwitcher: React.FC<ColorModeSwitcherProps> = (props) => {
-  const { toggleColorMode } = useColorMode()
-  const text = useColorModeValue("dark", "light")
-  const SwitchIcon = useColorModeValue(FaMoon, FaSun)
+export const ColorModeSwitcher: React.FC<ColorModeSwitcherProps> = ({
+  toggleTheme,
+  ...props
+}) => {
+  const theme = useTheme();
+  const SwitchIcon =
+    theme.palette.type === 'dark' ? Brightness7Icon : Brightness4Icon;
 
   return (
-    <IconButton
-      size="md"
-      fontSize="lg"
-      variant="ghost"
-      color="current"
-      marginLeft="2"
-      onClick={toggleColorMode}
-      icon={<SwitchIcon />}
-      aria-label={`Switch to ${text} mode`}
-      {...props}
-    />
-  )
-}
+    <IconButton color="inherit" onClick={toggleTheme} {...props}>
+      <SwitchIcon />
+    </IconButton>
+  );
+};

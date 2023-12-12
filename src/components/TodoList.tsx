@@ -1,25 +1,67 @@
-import * as React from "react";
-import { Button, Input, Flex, Checkbox, Heading } from "@chakra-ui/react";
+import '../../src/App.css';
+import * as React from 'react';
+import {
+  Button,
+  TextField,
+  Checkbox,
+  Typography,
+  Grid,
+  useTheme,
+} from '@material-ui/core';
 
-function TodoListItems() {
+interface Todo {
+  id: number;
+  text: string;
+}
+
+interface TodoListItemsProps {
+  todos: Todo[];
+  removeTodo: (id: number) => void;
+}
+
+function TodoListItems({ todos, removeTodo }: TodoListItemsProps) {
+  const theme = useTheme();
+
   return (
     <>
-      {[].map((todo: { id: number; text: string }) => (
-        <Flex pt={2} key={todo.id}>
-          <Checkbox />
-          <Input mx={2} value={todo.text} />
-          <Button>Delete</Button>
-        </Flex>
+      {todos.map((todo) => (
+        <Grid
+          container
+          spacing={3}
+          style={{
+            paddingTop: '16px',
+            backgroundColor: theme.palette.background.default,
+          }}
+          key={todo.id}
+        >
+          <Grid item xs={1}>
+            <Checkbox />
+          </Grid>
+          <Grid item xs={8}>
+            <TextField fullWidth value={todo.text} />
+          </Grid>
+          <Grid item xs={3}>
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={() => removeTodo(todo.id)}
+            >
+              Delete
+            </Button>
+          </Grid>
+        </Grid>
       ))}
     </>
   );
 }
 
-function TodoList() {
+function TodoList({ todos, removeTodo }: TodoListItemsProps) {
   return (
     <>
-      <Heading>Todo List</Heading>
-      <TodoListItems />
+      <Typography variant="h4" className="listcss">
+        Todo List
+      </Typography>
+      <TodoListItems todos={todos} removeTodo={removeTodo} />
     </>
   );
 }
